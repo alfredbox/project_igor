@@ -1,2 +1,2 @@
 # project_igor
-Make a robot
+Make an awesome robot
