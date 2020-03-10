@@ -19,4 +19,5 @@ while True:
         signal = max(signal, -1)
         print(signal)
     kit.motor3.throttle = signal
+    kit.motor4.throttle = signal
     #time.sleep(0.01)
