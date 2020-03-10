@@ -1,5 +1,5 @@
 '''
-A simple program to read in the state of a motot encoder
+A simple program to read in the state of a motor encoder
 pin and compute and print the speed in RPM.
 '''
 from gpiozero import DigitalInputDevice
