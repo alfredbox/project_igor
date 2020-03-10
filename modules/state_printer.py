@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime, timezone
 
 class StatePrinter:
     def __init__(self, state, cadence=1):
@@ -20,7 +21,8 @@ class StatePrinter:
             side=side,
             throttle=motor.throttle,
             rpm=motor.rpm,
-            direction=direction
+            direction=direction,
+            hist=motor.encoder_a.activation_history
         )
     
     def print_state(self):
@@ -33,7 +35,11 @@ class StatePrinter:
             port_state=self.motor_msg('Port', drive_state.port_motor),
             sbrd_state=self.motor_msg('Starboard', drive_state.sbrd_motor)
         )
+        ts = datetime.now(timezone.utc)
+        tmsg = ts.astimezone().strftime('%a %b %d %H:%M:%S %Y %z')
+        print('\nData at {}'.format(tmsg))
         print(drive_msg)
+        print('\n')
 
     async def run(self):
         while True:

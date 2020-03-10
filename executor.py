@@ -1,5 +1,7 @@
 import asyncio
 
+import modules.motor_read as motor_read
+import modules.motor_compute as motor_compute
 import modules.state_printer as state_printer
 import state
 
@@ -11,6 +13,10 @@ def assemble_modules():
     # Reporter module
     reporter = state_printer.StatePrinter(s)
     modules.append(reporter)
+    # Motor Encoders Reader
+    modules.append(motor_read.MotorReadModule(s))
+    # Motor State comptation
+    modules.append(motor_compute.MotorCompute(s))
     return modules
 
 async def add_module(module):
