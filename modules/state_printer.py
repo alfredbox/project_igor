@@ -1,4 +1,4 @@
-import time
+import asyncio
 
 class StatePrinter:
     def __init__(self, state, cadence=1):
@@ -35,7 +35,7 @@ class StatePrinter:
         )
         print(drive_msg)
 
-    def run(self):
+    async def run(self):
         while True:
-            time.sleep(self.cadence)
+            await asyncio.sleep(self.cadence)
             self.print_state()

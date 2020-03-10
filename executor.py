@@ -3,21 +3,30 @@ import asyncio
 import modules.state_printer as state_printer
 import state
 
-async def add_module(module):
-    await module.run()
-
-async def main():
+def assemble_modules():
     # Initialize state
     s = state.State()
     # Configure modules.
+    modules = []
+    # Reporter module
     reporter = state_printer.StatePrinter(s)
+    modules.append(reporter)
+    return modules
 
-    await asyncio.gather(
-        add_module(reporter)
-    )
+async def add_module(module):
+    await module.run()
 
-if __name__ == "__main__":
+def execute(modules):
+    async def main():
+        nonlocal modules 
+        tasks = [add_module(m) for m in modules]
+        await asyncio.gather(
+            *tasks
+        )
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
     loop.close()
-    
+
+if __name__ == "__main__":
+   modules = assemble_modules()
+   execute(modules)
