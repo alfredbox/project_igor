@@ -1,5 +1,6 @@
 import asyncio
 from datetime import datetime, timezone
+import os
 
 class StatePrinter:
     def __init__(self, state, cadence=1):
@@ -44,4 +45,5 @@ class StatePrinter:
     async def run(self):
         while True:
             await asyncio.sleep(self.cadence)
+            os.system('clear')
             self.print_state()
