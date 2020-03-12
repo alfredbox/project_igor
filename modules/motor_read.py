@@ -39,8 +39,4 @@ class MotorReadModule:
                 self.state.drive_state.sbrd_motor.encoder_b.activation_history)
         # TODO set other three encoders.
         while True:
-            await asyncio.sleep(5)
-
-    
-
-
+            await asyncio.sleep(5) 
