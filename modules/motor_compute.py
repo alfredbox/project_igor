@@ -43,7 +43,7 @@ class Motor:
             self.motor_state.direction = (
                 self.encoder_a.latest_time() > 
                 self.encoder_b.latest_time())
-            self.motor.rpm = (self.encoder_a.rpm() + self.encoder_b.rpm) / 2.0
+            self.motor_state.rpm = (self.encoder_a.rpm() + self.encoder_b.rpm()) / 2.0
 
 class MotorCompute:
     def __init__(self, state):
