@@ -1,19 +1,20 @@
 from adafruit_motorkit import MotorKit
 
+import asyncio
 import state
 
 class Motor:
     def __init__(self, motor_state, controller):
-        self.controller = contorller
+        self.controller = controller
         self.motor_state = motor_state
 
     def set_throttle(self, val):
-        assert (val <= 1. and val >= -1.) (
+        assert (val <= 1. and val >= -1.), (
             "Throttle must be between -1.0 and 1.0")
         self.controller.throttle = val
         self.motor_state.throttle = val
         
-class MotorModule
+class MotorModule:
     def __init__(self, state):
         kit = MotorKit()
         self.drive_state = state.drive_state

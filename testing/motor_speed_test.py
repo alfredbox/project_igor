@@ -18,7 +18,7 @@ def helper_assemble_modules(state):
 
 class TestMotorController(motor_controller.MotorModule):
     def __init__(self, state):
-        super.__init__(state)
+        super().__init__(state)
         # TODO other things (ALF)
 
     def control_policy(self):
