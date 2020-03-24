@@ -1,10 +1,11 @@
 import collections
 
-QUEUE_LEN = 12
+QUEUE_LEN = 8
 
 class EncoderState:
     def __init__(self):
         self.activation_history = collections.deque(maxlen=QUEUE_LEN)
+        self.direction_history = collections.deque(maxlen=QUEUE_LEN) 
 
 class MotorState:
     def __init__(self):

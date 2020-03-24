@@ -23,7 +23,8 @@ class TestMotorController(motor_controller.MotorModule):
 
     def control_policy(self):
         # TODO (ALF)
-        pass
+        self.port_motor.set_throttle(0.)
+        self.sbrd_motor.set_throttle(0.)
 
 s = state.State()
 modules = helper_assemble_modules(s)
