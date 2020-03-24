@@ -22,6 +22,10 @@ def assemble_modules():
 async def add_module(module):
     await module.run()
 
+def cleanup(modules):
+    for m in modules:
+        m.cleanup()
+
 def execute(modules):
     async def main():
         nonlocal modules 
@@ -29,9 +33,12 @@ def execute(modules):
         await asyncio.gather(
             *tasks
         )
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
-    loop.close()
+    try:
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(main())
+        loop.close()
+    except:
+        cleanup(modules)
 
 if __name__ == "__main__":
    modules = assemble_modules()

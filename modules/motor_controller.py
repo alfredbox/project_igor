@@ -32,3 +32,7 @@ class MotorModule:
         while True:
             await asyncio.sleep(0.1)
             self.control_policy()
+
+    def cleanup(self):
+        self.port_motor.set_throttle(0)
+        self.sbrd_motor.set_throttle(0)

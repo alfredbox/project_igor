@@ -46,3 +46,6 @@ class StatePrinter:
             await asyncio.sleep(self.cadence)
             os.system('clear')
             self.print_state()
+
+    def cleanup(self):
+        print('Exiting..')

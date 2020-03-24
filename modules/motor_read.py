@@ -52,3 +52,6 @@ class MotorReadModule:
                 self.state.drive_state.sbrd_motor)
         while True:
             await asyncio.sleep(5) 
+
+    def cleanup(self):
+        pass
