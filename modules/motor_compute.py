@@ -35,7 +35,6 @@ class MotorEncoder:
         return (d1 + d2) / 2.0
 
     def low_pass_filtered_time_d(self):
-        alpha = 0.1
         last = None
         deltas = []
         for t in self.activation_history:
@@ -45,9 +44,11 @@ class MotorEncoder:
 
         contemporary_delta = time.time() - self.activation_history[-1]
         if contemporary_delta > 2*mean(deltas):
+            alpha = 0.5
             self.last_filtered_time = (self.last_filtered_time*(1.0-alpha)
                                        + alpha*contemporary_delta)
         else:
+            alpha = 0.1
             for d in deltas:
                 self.last_filtered_time = (self.last_filtered_time*(1.0-alpha)
                                            + alpha*d)
@@ -61,6 +62,7 @@ class MotorEncoder:
         return (60. / (self.low_pass_filtered_time_d() * GEARING * ENCODERMULT) 
                 if self.ready() else None)
 
+
 class Motor:
     def __init__(self, motor_state):
         self.motor_state = motor_state
@@ -69,8 +71,11 @@ class Motor:
 
     def propagate_state(self):
         if self.encoder_a.ready() and self.encoder_b.ready():
-            self.motor_state.direction = self.encoder_b.averaged_direction()
-            self.motor_state.rpm = (self.encoder_a.rpm() + self.encoder_b.rpm()) / 2.0
+            # Note using throttle sign to determine direction as
+            # quad encoder signal is noisy.
+            self.motor_state.direction = self.motor_state.throttle < 0
+            self.motor_state.rpm = (self.encoder_a.rpm() 
+                                    + self.encoder_b.rpm()) / 2.0
 
 
 class MotorCompute:

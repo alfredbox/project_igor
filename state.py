@@ -1,6 +1,6 @@
 import collections
 
-QUEUE_LEN = 8
+QUEUE_LEN = 9   
 
 class EncoderState:
     def __init__(self):

@@ -16,7 +16,7 @@ class MotorEncoderPair:
 
 
 class MotorEncoder:
-    def __init__(self, pin, encoder_state):
+    def __init__(self, pin, encoder_state, main=True):
         self.encoder = DigitalInputDevice(pin)
         self.activation_history = encoder_state.activation_history
         self.direction_history = encoder_state.direction_history
@@ -30,8 +30,8 @@ class MotorEncoder:
             
     def on_detection(self):
         assert self.twin_encoder is not None, "Twin encoder has not been set."
-        self.activation_history.append(time.time())
         self.direction_history.append(self.twin_encoder.get_value())
+        self.activation_history.append(time.time())
 
     def get_value(self):
         return self.encoder.value

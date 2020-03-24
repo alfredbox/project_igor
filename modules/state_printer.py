@@ -15,9 +15,7 @@ class StatePrinter:
             '{side} motor:\n'
             '\tThrottle: {throttle}\n'
             '\tSpeed: {rpm:.1f} rpm\n'
-            '\tDirection: {direction}\n'
-            '\td hist a: {ha}\n'
-            '\td hist b: {hb}\n'
+            '\tDirection: {direction}'
         )
         direction = 'forward' if motor.direction else 'backward'
         return msg.format(
@@ -25,8 +23,6 @@ class StatePrinter:
             throttle=motor.throttle,
             rpm=motor.rpm,
             direction=direction,
-            ha=motor.encoder_a.direction_history,
-            hb=motor.encoder_b.direction_history
         )
     
     def print_state(self):
