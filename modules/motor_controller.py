@@ -16,7 +16,7 @@ class MotorControl:
 class MotorControlModule(ModuleBase):
     def __init__(self, state):
         DEFAULT_CADENCE_S = 0.1
-        super().__init__(self. state, cadence=DEFAULT_CADENCE_S)
+        super().__init__(state, cadence=DEFAULT_CADENCE_S)
         
         kit = MotorKit()
         self.drive_state = state.drive_state

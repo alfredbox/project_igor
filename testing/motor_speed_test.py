@@ -10,20 +10,20 @@ import modules.state_printer as state_printer
 def helper_assemble_modules(state):
     modules = [
         motor_read.MotorReadModule(state),
-        motor_compute.MotorCompute(state),
-        state_printer.StatePrinter(state),
+        motor_compute.MotorComputeModule(state),
+        state_printer.StatePrintModule(state),
         TestMotorController(state)
     ]
     return modules
         
 
-class TestMotorController(motor_controller.MotorModule):
+class TestMotorController(motor_controller.MotorControlModule):
     def __init__(self, state):
         super().__init__(state)
         # TODO other things (ALF)
         self.time = time.time()
 
-    def control_policy(self):
+    def step(self):
         # TODO (ALF)
         val = 0.
         if (time.time() - self.time) > 1:

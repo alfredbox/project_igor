@@ -17,7 +17,7 @@ class StatePrintModule(ModuleBase):
             '\tDirection: {direction}'
         )
         direction = 'forward' if motor.direction else 'backward'
-        msg = msg.format(
+        return msg.format(
             side=side,
             throttle=motor.throttle,
             rpm=motor.rpm,
@@ -41,7 +41,7 @@ class StatePrintModule(ModuleBase):
         print('\n')
 
     def step(self):
-        os.system.clear()
+        os.system('clear')
         self.print_state()
 
     def cleanup(self):
