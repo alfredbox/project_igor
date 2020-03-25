@@ -1,8 +1,8 @@
-import asyncio
-from gpiozero import DigitalInputDevice
 import time
 
 from modules.module_base import ModuleBase
+
+from gpiozero import DigitalInputDevice
 
 PORT_GREEN = 12
 SBRD_GREEN = 13

@@ -23,7 +23,6 @@ class StatePrintModule(ModuleBase):
             rpm=motor.rpm,
             direction=direction,
         )
-
     
     def print_state(self):
         drive_state = self.state.drive_state

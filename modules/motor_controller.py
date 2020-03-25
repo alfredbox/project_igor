@@ -1,5 +1,3 @@
-import state
-
 from modules.module_base import ModuleBase
 
 from adafruit_motorkit import MotorKit

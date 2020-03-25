@@ -23,7 +23,8 @@ class DriveState:
 
 class IMUState:
     def __init__(self):
-        self.gravity = (0., 0., 0.)
+        self.angle_y = 0.
+        self.angle_history = collections.deque(maxlen=QUEUE_LEN)
 
 class State:
     def __init__(self):

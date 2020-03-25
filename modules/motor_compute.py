@@ -1,4 +1,3 @@
-import asyncio
 from statistics import mean
 import time
 
@@ -37,6 +36,8 @@ class EncoderCompute:
         return (d1 + d2) / 2.0
 
     def low_pass_filtered_time_d(self):
+        if not self.ready():
+            return None
         last = None
         deltas = []
         for t in self.activation_history:
@@ -57,6 +58,8 @@ class EncoderCompute:
         return self.last_filtered_time
 
     def averaged_direction(self):
+        if not self.ready():
+            return None
         direction_sum = sum(self.direction_history)
         return direction_sum >= len(self.direction_history)*0.5
 
@@ -80,7 +83,7 @@ class MotorCompute:
                                     + self.encoder_b.rpm()) / 2.0
 
 
-class MotorComputeModule(MotorBase):
+class MotorComputeModule(ModuleBase):
     def __init__(self, state):
         DEFAULT_CADENCE_S = 0.1
         super().__init__(state, cadence=DEFAULT_CADENCE_S)
