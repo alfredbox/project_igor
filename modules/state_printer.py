@@ -23,6 +23,13 @@ class StatePrintModule(ModuleBase):
             rpm=motor.rpm,
             direction=direction,
         )
+
+    def imu_msg(self):
+        msg = (
+            '**IMU State:\n'
+            'Angle-Y: {angle_y:.3f} deg'
+        )
+        return msg.format(angle_y=self.state.imu_state.angle_y)
     
     def print_state(self):
         drive_state = self.state.drive_state
@@ -38,7 +45,7 @@ class StatePrintModule(ModuleBase):
         tmsg = ts.astimezone().strftime('%a %b %d %H:%M:%S %Y %z')
         print('\nData at {}'.format(tmsg))
         print(drive_msg)
-        print('\n')
+        print(self.imu_msg())
 
     def step(self):
         os.system('clear')

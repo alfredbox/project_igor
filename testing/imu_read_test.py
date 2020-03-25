@@ -7,7 +7,7 @@ import modules.state_printer as state_printer
 
 def helper_assemble_modules(state):
     modules = [
-        state_printer.StatePrinter(state),
+        state_printer.StatePrintModule(state),
         TestImuReadModule(state)
     ]
     return modules
