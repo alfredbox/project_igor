@@ -2,10 +2,12 @@ import asyncio
 from statistics import mean
 import time
 
+from modules.module_base import ModuleBase
+
 GEARING = 20.
 ENCODERMULT = 12.
 
-class MotorEncoder:
+class EncoderCompute:
     def __init__(self, encoder_state):
         self.activation_history = encoder_state.activation_history
         self.direction_history = encoder_state.direction_history
@@ -63,11 +65,11 @@ class MotorEncoder:
                 if self.ready() else None)
 
 
-class Motor:
+class MotorCompute:
     def __init__(self, motor_state):
         self.motor_state = motor_state
-        self.encoder_a = MotorEncoder(motor_state.encoder_a)
-        self.encoder_b = MotorEncoder(motor_state.encoder_b)
+        self.encoder_a = EncoderCompute(motor_state.encoder_a)
+        self.encoder_b = EncoderCompute(motor_state.encoder_b)
 
     def propagate_state(self):
         if self.encoder_a.ready() and self.encoder_b.ready():
@@ -78,18 +80,15 @@ class Motor:
                                     + self.encoder_b.rpm()) / 2.0
 
 
-class MotorCompute:
+class MotorComputeModule(MotorBase):
     def __init__(self, state):
+        DEFAULT_CADENCE_S = 0.1
+        super().__init__(state, cadence=DEFAULT_CADENCE_S)
         self.motors = [
-            Motor(state.drive_state.port_motor),
-            Motor(state.drive_state.sbrd_motor)
+            MotorCompute(state.drive_state.port_motor),
+            MotorCompute(state.drive_state.sbrd_motor)
         ]
 
-    async def run(self):
-        while True:
-            await asyncio.sleep(0.1)
-            for m in self.motors:
-                m.propagate_state()
-    
-    def cleanup(self):
-        pass
+    def step(self):
+        for m in self.motors:
+            m.propagate_state()

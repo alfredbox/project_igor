@@ -2,6 +2,8 @@ import asyncio
 from gpiozero import DigitalInputDevice
 import time
 
+from modules.module_base import ModuleBase
+
 PORT_GREEN = 12
 SBRD_GREEN = 13
 PORT_WHITE = 5
@@ -37,21 +39,18 @@ class MotorEncoder:
         return self.encoder.value
 
 
-class MotorReadModule:
+class MotorReadModule(ModuleBase):
     def __init__(self, state):
-        self.state = state
+        DEFAULT_CADENCE_S = 5
+        super().__init__(state, cadence=DEFAULT_CADENCE_S)
 
-    async def run(self):
-        _ = MotorEncoderPair(
-                PORT_GREEN, 
-                PORT_WHITE, 
-                self.state.drive_state.port_motor)
-        _ = MotorEncoderPair(
-                SBRD_GREEN, 
-                SBRD_WHITE, 
-                self.state.drive_state.sbrd_motor)
-        while True:
-            await asyncio.sleep(5) 
-
-    def cleanup(self):
-        pass
+        self._port_motor = MotorEncoderPair(
+            PORT_GREEN, 
+            PORT_WHITE, 
+            self.state.drive_state.port_motor
+        )
+        self._sbrd_motor = MotorEncoderPair(
+            SBRD_GREEN, 
+            SBRD_WHITE, 
+            self.state.drive_state.sbrd_motor
+        )

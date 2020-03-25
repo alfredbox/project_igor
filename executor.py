@@ -10,13 +10,12 @@ def assemble_modules():
     s = state.State()
     # Configure modules.
     modules = []
-    # Reporter module
-    reporter = state_printer.StatePrinter(s)
-    modules.append(reporter)
+    # State printer
+    modules.append(state_printer.StatePrintModule(s))
     # Motor Encoders Reader
     modules.append(motor_read.MotorReadModule(s))
     # Motor State comptation
-    modules.append(motor_compute.MotorCompute(s))
+    modules.append(motor_compute.MotorComputeModule(s))
     return modules
 
 async def add_module(module):
@@ -39,6 +38,7 @@ def execute(modules):
         loop.close()
     except:
         cleanup(modules)
+        raise
 
 if __name__ == "__main__":
    modules = assemble_modules()

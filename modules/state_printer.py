@@ -1,14 +1,13 @@
-import asyncio
 from datetime import datetime, timezone
 import os
 
-class StatePrinter:
-    def __init__(self, state, cadence=1):
-        self.state=state
-        self.set_cadence(cadence)
+from modules.module_base import ModuleBase
 
-    def set_cadence(self, cadence):
-        self.cadence = cadence
+class StatePrintModule(ModuleBase):
+    def __init__(self, state, debug=False):
+        self.debug = debug
+        DEFAULT_CADENCE_S = 1
+        super().__init__(state, cadence=DEFAULT_CADENCE_S)
 
     def motor_msg(self, side, motor): 
         msg = (
@@ -18,12 +17,13 @@ class StatePrinter:
             '\tDirection: {direction}'
         )
         direction = 'forward' if motor.direction else 'backward'
-        return msg.format(
+        msg = msg.format(
             side=side,
             throttle=motor.throttle,
             rpm=motor.rpm,
             direction=direction,
         )
+
     
     def print_state(self):
         drive_state = self.state.drive_state
@@ -41,11 +41,9 @@ class StatePrinter:
         print(drive_msg)
         print('\n')
 
-    async def run(self):
-        while True:
-            await asyncio.sleep(self.cadence)
-            os.system('clear')
-            self.print_state()
+    def step(self):
+        os.system.clear()
+        self.print_state()
 
     def cleanup(self):
         print('Exiting..')
