@@ -22,19 +22,16 @@ class TestMotorController(motor_controller.MotorControlModule):
         super().__init__(state)
         # TODO other things (ALF)
         self.time = time.time()
+        self.val = 1
 
     def step(self):
         # TODO (ALF)
-        val = 0.
-        if (time.time() - self.time) > 1:
-            val=0.5
-        if (time.time() - self.time) > 10:
-            val=0.8
-        if (time.time() - self.time) > 20:
-            val=0
+        if (time.time() - self.time) > 15:
+            self.val -= 0.05
+            self.time = time.time()
 
-        self.port_motor.set_throttle(val)
-        self.sbrd_motor.set_throttle(val)
+        self.port_motor.set_throttle(self.val)
+        self.sbrd_motor.set_throttle(self.val)
 
 s = state.State()
 modules = helper_assemble_modules(s)

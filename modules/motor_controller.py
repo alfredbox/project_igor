@@ -1,3 +1,5 @@
+
+from libs.pid import PID
 from modules.module_base import ModuleBase
 
 from adafruit_motorkit import MotorKit
@@ -15,7 +17,7 @@ class MotorControl:
         
 class MotorControlModule(ModuleBase):
     def __init__(self, state):
-        DEFAULT_CADENCE_S = 0.1
+        DEFAULT_CADENCE_S = 0.002
         super().__init__(state, cadence=DEFAULT_CADENCE_S)
         
         kit = MotorKit()
@@ -24,11 +26,19 @@ class MotorControlModule(ModuleBase):
         self.port_motor = MotorControl(self.drive_state.port_motor, kit.motor3)
         # Starboard Motor
         self.sbrd_motor = MotorControl(self.drive_state.sbrd_motor, kit.motor4)
+        self.goal_angle = 0
+        self.angle_control = PID(0.15, 0., -0.02)
+        #self.angle_control = PID(0.0550, 0.627, 0.002)
+
 
     def step(self):
         # TODO make less trivial
-        self.port_motor.set_throttle(0.5)
-        self.sbrd_motor.set_throttle(0.5)
+        angle = self.state.imu_state.angle_y
+        signal = self.angle_control.signal(angle)
+        signal = min(signal, 1)
+        signal = max(signal, -1)
+        self.port_motor.set_throttle(signal)
+        self.sbrd_motor.set_throttle(signal)
 
     def cleanup(self):
         self.port_motor.set_throttle(0)
