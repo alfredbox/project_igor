@@ -1,28 +1,40 @@
 import time
 
+from libs.clamp import clamp   
+
 class PID:
-    def __init__(self, Kp, Ki, Kd):
+    def __init__(self, Kp, Ki, Kd, lo=-1, hi=1):
         self.Kp = Kp
         self.Ki = Ki
         self.Kd = Kd
-        self.error = 0
-        self.i_error = 0
-        self.setpoint = -0.5
-        self.last_point = 0
-        self.time = time.time()
+        self.lo = lo
+        self.hi = hi
+        self.i_error = 0.
+        self.set_point(0.)
+        self.lastpoint = self.setpoint()
+        self.time = time.monotonic()
+
+    def set_point(point):
+        self._setpoint = point
+
+    def setpoint(self):
+        return self._setpoint
 
     def signal(self, value):
-        dt = time.time() - self.time
-        #import pdb
-        #pdb.set_trace()
-        error = value - self.setpoint
-        self.i_error += error*dt
-        self.i_error = min(self.i_error, 0.7)
-        self.i_error = max(self.i_error, -0.7)
-        signal =(self.Kp*error 
-                 + self.Ki*self.i_error
-                 - self.Kd*(value-self.last_point)/dt)
-        self.error = error
-        self.last_point = value
+        dt = time.monotonic() - self.time
+        assert dt > 0, 'Non positive timestep - aborting.'
+
+        error = self.setpoint() - value
+        dpoint = value = self.lastpoint
+
+        p = self.Kp*error
+        self.i_error += self.Ki * error * dt
+        self.i_error = clamp(self.i_error, lo=self.lo, hi=self.hi)
+        i = self.i_error
+        d = self.Kd * dpoint / dt
+
+        # Advance stored data
         self.time += dt
-        return signal
+        self.lastpoint = value
+
+        return clamp(p+i-d, lo=self.lo, hi=self.hi)
