@@ -26,7 +26,12 @@ class IMUState:
         self.angle_y = 0.
         self.angle_history = collections.deque(maxlen=QUEUE_LEN)
 
+class ExecutionControl:
+    def __init__(self):
+        self.termination_requested = False
+
 class State:
     def __init__(self):
         self.imu_state = IMUState()
-        self.drive_state = DriveState() 
+        self.drive_state = DriveState()
+        self.execution_control = ExecutionControl()

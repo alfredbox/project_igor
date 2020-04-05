@@ -42,9 +42,9 @@ def execute(modules):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(main())
         loop.close()
-    except:
+    finally:
         cleanup(modules)
-        raise
+
 
 if __name__ == "__main__":
    modules = assemble_modules()

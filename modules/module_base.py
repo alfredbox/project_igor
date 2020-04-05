@@ -21,12 +21,12 @@ class ModuleBase:
             await self.run_main()
             
     async def run_main(self):
-        while True:
+        while not self.state.execution_control.termination_requested:
             await asyncio.sleep(self.cadence)
             self.step()
 
     async def run_and_log(self):
-        while True:
+        while not self.state.execution_control.termination_requested:
             await asyncio.sleep(self.cadence)
             commence = time.time()
             self.step()
