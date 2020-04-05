@@ -14,7 +14,7 @@ class PID:
         self.lastpoint = self.setpoint()
         self.time = time.monotonic()
 
-    def set_point(point):
+    def set_point(self, point):
         self._setpoint = point
 
     def setpoint(self):

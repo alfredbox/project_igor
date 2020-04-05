@@ -13,7 +13,7 @@ def assemble_modules():
     # Configure modules.
     modules = []
     # State printer
-    modules.append(state_printer.StatePrintModule(s))
+    #modules.append(state_printer.StatePrintModule(s))
     # Motor Encoders Reader
     modules.append(motor_read.MotorReadModule(s))
     # Motor State comptation
