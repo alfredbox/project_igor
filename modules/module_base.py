@@ -2,14 +2,17 @@ import asyncio
 import time
 
 class ModuleBase:
-    def __init__(self, state, cadence=None, logging=False):
+    def __init__(self, state, cadence=None):
         self.state = state
         self.cadence = cadence
-        self.logging = logging
+        self.logging = False
         self.execution_log = []
 
     def set_cadence(self, cadence):
         self.cadence = cadence
+
+    def set_logging(self, should_log):
+        self.logging = should_log
 
     def step(self):
         pass

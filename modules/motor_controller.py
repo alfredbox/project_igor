@@ -27,9 +27,9 @@ class MotorControl:
         return clamp(val*0.72 + offset)
         
 class MotorControlModule(ModuleBase):
-    def __init__(self, state, logging=False):
+    def __init__(self, state):
         DEFAULT_CADENCE_S = 0.002
-        super().__init__(state, cadence=DEFAULT_CADENCE_S, logging=logging)
+        super().__init__(state, cadence=DEFAULT_CADENCE_S)
         self.data = []
         self.start_time = time.time()
         
