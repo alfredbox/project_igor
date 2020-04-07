@@ -1,11 +1,16 @@
 import asyncio
 
+import libs.logger_setup as logger_setup
 import modules.imu_read as imu_read
 import modules.motor_read as motor_read
 import modules.motor_compute as motor_compute
 import modules.motor_controller as motor_controller
 import modules.state_printer as state_printer
 import state
+
+# Logging
+logger_setup.setup()
+logger = logger_setup.get_logger()
 
 def assemble_modules():
     # Initialize state
@@ -20,7 +25,7 @@ def assemble_modules():
     modules.append(motor_compute.MotorComputeModule(s))
     # Motor Control
     modules.append(motor_controller.MotorControlModule(s))
-    # Imu Reader
+    # Imu Reader    
     modules.append(imu_read.ImuReadModule(s))
     return modules
 
@@ -47,5 +52,6 @@ def execute(modules):
 
 
 if __name__ == "__main__":
-   modules = assemble_modules()
-   execute(modules)
+    logger.info('Activating Igor') 
+    modules = assemble_modules()
+    execute(modules)

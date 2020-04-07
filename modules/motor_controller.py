@@ -1,10 +1,19 @@
+import logging
 import time
+
 from libs.clamp import clamp
+from libs.logger_setup import get_logger
 from libs.pid import PID
 
 from modules.module_base import ModuleBase
 
 from adafruit_motorkit import MotorKit
+
+logger = get_logger()
+
+
+class ControlTooSlow(Exception):
+    pass
 
 
 class MotorControl:
@@ -30,8 +39,8 @@ class MotorControlModule(ModuleBase):
     def __init__(self, state):
         DEFAULT_CADENCE_S = 0.002
         super().__init__(state, cadence=DEFAULT_CADENCE_S)
-        self.data = []
         self.start_time = time.time()
+        self.last_control_time = None
         
         kit = MotorKit()
         self.drive_state = state.drive_state
@@ -51,14 +60,24 @@ class MotorControlModule(ModuleBase):
         self.port_motor.set_throttle(signal)
         self.sbrd_motor.set_throttle(signal)
         t = time.time()
-        if t - self.start_time > 80:
-            raise ValueError('No values')
-        self.data.append((t, angle, signal))
+        dt = (t - self.last_control_time 
+              if self.last_control_time is not None 
+              else self.last_control_time)
+        self.last_control_time = t
+        if logger.getEffectiveLevel() <= logging.DEBUG:
+            data = {
+                'timestamp': t,
+                'set_throttle': signal,
+                'control_angle': angle
+            }
+            logger.debug('Control Data: {}'.format(data))
+        
+        if dt is not None and dt > 0.05:
+            msg = 'Duration since last control is too high ({} s)'.format(dt)
+            logger.error(msg)
+            #raise ControlTooSlow('msg')
+
 
     def cleanup(self):
         self.port_motor.set_throttle(0)
-        self.sbrd_motor.set_throttle(0)
-        with open('igor_data_dump.csv', 'w+') as f:
-            for d in self.data:
-                f.write('{}, {}, {}\n'.format(d[0], d[1], d[2]))
-        
+        self.sbrd_motor.set_throttle(0) 
