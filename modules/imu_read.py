@@ -1,5 +1,6 @@
 from busio import I2C
 from board import SDA, SCL
+import json
 import logging
 import time
 
@@ -42,7 +43,7 @@ class ImuReadModule(ModuleBase):
                     'timestamp': t,
                     'measured angle': angle_y
                 }
-                logger.debug('IMU Data: {}'.format(data))
+                logger.debug('IMU Data: {}'.format(json.dumps(data)))
             if dt is not None and dt > 0.05:
                 msg = ('Duration since last IMU read is too high'
                        ' ({} s)'.format(dt))

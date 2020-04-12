@@ -1,3 +1,4 @@
+import json
 import logging
 import time
 
@@ -70,7 +71,7 @@ class MotorControlModule(ModuleBase):
                 'set_throttle': signal,
                 'control_angle': angle
             }
-            logger.debug('Control Data: {}'.format(data))
+            logger.debug('Control Data: {}'.format(json.dumps(data)))
         
         if dt is not None and dt > 0.05:
             msg = 'Duration since last control is too high ({} s)'.format(dt)

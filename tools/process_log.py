@@ -39,7 +39,7 @@ def process(filename):
     with open(filename, 'r') as f:
         for l in f.readlines():
             if 'DEBUG:Igor:Control Data:' in l:
-                s = l.replace('DEBUG:Igor:Control Data:', '')
+                s = l.replace('DEBUG:igor:Control Data:', '')
                 d = json.loads(s)
                 data.append(d)
     make_plots(data)

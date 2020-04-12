@@ -9,5 +9,5 @@ def setup():
 
 def get_logger():
     l = logging.getLogger('igor')
-    l.setLevel(logging.INFO)
+    l.setLevel(logging.DEBUG)
     return l
