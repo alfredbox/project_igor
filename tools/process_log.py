@@ -22,12 +22,12 @@ def sample_freq(data):
 
 def throttle_angle_trace(data): 
     times = [t['timestamp'] for t in data]
-    throttle = [t['set_throttle'] for t in data]
+    throttle = [t['set_throttle']*10. for t in data]
     angle = [t['control_angle'] for t in data]
     plt.figure(2)
     plt.plot(times, throttle, times, angle)
     plt.xlabel('Time s')
-    plt.legend(['Throttle', 'Angle degs'])
+    plt.legend(['Throttle(x10)', 'Angle degs'])
 
 
 def make_plots(data):
