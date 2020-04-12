@@ -1,6 +1,7 @@
 import argparse
 import json
 import matplotlib.pyplot as plt
+import os
 import sys
 
 def sample_freq(data):
@@ -11,11 +12,12 @@ def sample_freq(data):
         if last is not None:
             durations.append(t - last)
         last = t
-    times.pop()
-    plt.figure(1)
-    plt.plot(times, durations)
-    plt.xlabel('Time s')
-    plt.ylabel('dt s')
+    if times:
+        times.pop()
+        plt.figure(1)
+        plt.plot(times, durations)
+        plt.xlabel('Time s')
+        plt.ylabel('dt s')
 
 
 def throttle_angle_trace(data): 
@@ -38,12 +40,21 @@ def process(filename):
     data = []
     with open(filename, 'r') as f:
         for l in f.readlines():
-            if 'DEBUG:Igor:Control Data:' in l:
+            if 'DEBUG:igor:Control Data:' in l:
                 s = l.replace('DEBUG:igor:Control Data:', '')
                 d = json.loads(s)
                 data.append(d)
     make_plots(data)
 
+def latest(directory):
+    fl = os.listdir(directory)
+    fl.sort()
+    fl.reverse()
+    for f in fl:
+        if "igor" in f:
+            return os.path.join(directory, f)
+
+    return None
 
 def main():
     parser = argparse.ArgumentParser(description='Process a log file created by Igor')
@@ -51,9 +62,14 @@ def main():
                         '--log',
                         default=None,
                         help='Path to the log file to be processed')
+    parser.add_argument('-d',
+                        '--directory',
+                        default=None,
+                        help='Path to the log file to be processed')
+
     args = parser.parse_args()
-    log = args.log if args.log is not None else latest_log()
-    process(args.log)
+    log = args.log if args.log is not None else latest(args.directory)
+    process(log)
 
 if __name__ == "__main__":
     sys.exit(main())
