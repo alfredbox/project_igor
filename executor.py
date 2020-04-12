@@ -5,6 +5,7 @@ import modules.imu_read as imu_read
 import modules.motor_read as motor_read
 import modules.motor_compute as motor_compute
 import modules.motor_controller as motor_controller
+import modules.power_monitor as power_monitor
 import modules.state_printer as state_printer
 import state
 
@@ -27,6 +28,8 @@ def assemble_modules():
     modules.append(motor_controller.MotorControlModule(s))
     # Imu Reader    
     modules.append(imu_read.ImuReadModule(s))
+    # Power monitoring
+    modules,append(power_monitor.PowerMonitorModule(s))
     return modules
 
 async def add_module(module):
