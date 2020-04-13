@@ -20,7 +20,7 @@ class PID:
     def setpoint(self):
         return self._setpoint
 
-    def signal(self, value):
+    def signal(self, value, d_value=None):
         dt = time.monotonic() - self.time
         assert dt > 0, 'Non positive timestep - aborting.'
 
@@ -31,7 +31,8 @@ class PID:
         self.i_error += self.Ki * error * dt
         self.i_error = clamp(self.i_error, lo=self.lo, hi=self.hi)
         i = self.i_error
-        d = self.Kd * dpoint / dt
+        dv_dt = d_value if d_value is not None else dpoint/dt
+        d = self.Kd * dv_dt
 
         # Advance stored data
         self.time += dt

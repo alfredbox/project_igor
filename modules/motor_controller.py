@@ -57,7 +57,8 @@ class MotorControlModule(ModuleBase):
     def step(self):
         # TODO make less trivial
         angle = self.state.imu_state.angle_y
-        signal = self.angle_control.signal(-angle)
+        d_angle = self.state.imu_state.d_angle_y
+        signal = self.angle_control.signal(-angle, -d_angle)
         self.port_motor.set_throttle(signal)
         self.sbrd_motor.set_throttle(signal)
         t = time.time()
@@ -70,6 +71,7 @@ class MotorControlModule(ModuleBase):
                 'timestamp': t,
                 'set_throttle': signal,
                 'control_angle': angle
+                'control_d_angle': d_angle
             }
             logger.debug('Control Data: {}'.format(json.dumps(data)))
         
