@@ -34,7 +34,7 @@ class ImuReadModule(ModuleBase):
         angle_y = self.sensor.euler[1]
         if angle_y is not None:
             self.imu_state.angle_y = angle_y
-            d_angle_y = (None if self.last_angle_y is not None 
+            d_angle_y = (None if self.last_angle_y is None 
                          else angle_y - self.last_angle_y)
             self.last_angle_y = angle_y
             t = time.time()

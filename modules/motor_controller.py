@@ -70,7 +70,7 @@ class MotorControlModule(ModuleBase):
             data = {
                 'timestamp': t,
                 'set_throttle': signal,
-                'control_angle': angle
+                'control_angle': angle,
                 'control_d_angle': d_angle
             }
             logger.debug('Control Data: {}'.format(json.dumps(data)))
