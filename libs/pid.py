@@ -11,7 +11,7 @@ class PID:
         self.hi = hi
         self.i_error = 0.
         self.set_point(0.)
-        self.lastpoint = self.setpoint()
+        self.lastpoint = None
         self.time = time.monotonic()
 
     def set_point(self, point):
@@ -25,7 +25,7 @@ class PID:
         assert dt > 0, 'Non positive timestep - aborting.'
 
         error = self.setpoint() - value
-        dpoint = value = self.lastpoint
+        dpoint = 0 if self.lastpoint is None else value - self.lastpoint
 
         p = self.Kp*error
         self.i_error += self.Ki * error * dt
