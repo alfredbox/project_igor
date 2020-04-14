@@ -1,45 +1,81 @@
-import json
 import logging
 import math
 import time
 
-from libs.clamp import clamp
 import libs.logger_setup as logger_setup
-from libs.pid import PID
+from modules.imu_read import ImuReadModule
+from modules.motor_controller import MotorControlModule
+import state
 
 logger_setup.setup(sim=True)
 logger = logger_setup.get_logger()
 
-class AngleControlSim:
-    def __init__(self, kd, ki, kp, dt):
-        self.angle_control = PID(kd, ki, kp)
-        self.angle_control.set_point(0.)
-        self.dt = dt
 
-    def sim_forward_for(self, secs, angle):
+class SimulatedMotorController:
+    def __init__(self):
+        self.throttle = 0.
+
+class SimulatedMotorDriver:
+    def __init__(self):
+        self.motor3 = SimulatedMotorController()
+        self.motor4 = SimulatedMotorController()
+
+class SimulatedIMU:
+    def __init__(self, angle_0, policy):
+        self.angle = angle_0
+        self.angle_0 = angle_0
+        self.policy = policy
+        self.euler = (0., self.angle, 0.)
+
+    def update(self, elapsed):
+        self.angle = self.policy(self.angle_0, elapsed)
+        self.euler = (0., self.angle, 0.)
+
+
+# Angle update policies
+def constant(angle_0, elapsed):
+    return angle_0
+
+def linear2(angle_0, elapsed):
+    return angle_0 + 2*elapsed
+
+def sin2(angle_0, elapsed):
+    return math.sin(elapsed*2)*angle_0
+#######################
+
+
+class MotorImuSimulation:
+    def __init__(self, pid_coeffs, angle_0, policy, dt):
+        self.state = state.State()
+        self.mc = MotorControlModule(
+            self.state, 
+            simulated_motor_driver=SimulatedMotorDriver())
+        Kp, Ki, Kd = coeffs
+        self.mc.reset_pid(Kp, Ki, Kd)
+        self.imu = ImuReadModule(
+            self.state,
+            simulated_imu=SimulatedIMU(angle_0, policy))
+        self.dt = dt
+                
+    def sim_forward_for(self, secs): 
         starting = time.monotonic()
         elapsed = 0
-        while(elapsed < secs):
-            a = self.angle_fcn(angle, elapsed)
-            signal = self.angle_control.signal(a)
-            t = time.monotonic()
-            if logger.getEffectiveLevel() <= logging.DEBUG:
-                data = {
-                    'timestamp': t,
-                    'set_throttle': signal,
-                    'control_angle': a
-                }
-                logger.debug('Control Data: {}'.format(json.dumps(data)))
-            elapsed = t - starting
+        while (elapsed < secs):
+            import pdb
+            #pdb.set_trace()
+            self.imu.sensor.update(elapsed)
+            self.imu.step()
+            self.mc.step()
             time.sleep(self.dt)
+            t = time.monotonic()
+            elapsed = t - starting 
+               
 
-    def angle_fcn(self, angle_0, elapsed):
-        return math.sin(elapsed*2)*angle_0
-                
 if __name__ == "__main__":
     #kp 0.05 - 0.08
     #ki 0.01 - 0.2
     #kd 0.01 - 0.1
-    sim = AngleControlSim(0.04, 0.04, 0.04, 0.006)
-    sim.sim_forward_for(3., -10.)
+    coeffs = (0.08, 0., 0.02)
+    sim = MotorImuSimulation(coeffs, -10., sin2, 0.006)
+    sim.sim_forward_for(3.)
 

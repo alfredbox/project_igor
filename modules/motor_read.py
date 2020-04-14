@@ -18,7 +18,7 @@ class MotorEncoderPair:
 
 
 class MotorEncoder:
-    def __init__(self, pin, encoder_state, main=True):
+    def __init__(self, pin, encoder_state):
         self.encoder = DigitalInputDevice(pin)
         self.activation_history = encoder_state.activation_history
         self.direction_history = encoder_state.direction_history

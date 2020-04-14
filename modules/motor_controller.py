@@ -8,8 +8,6 @@ from libs.pid import PID
 
 from modules.module_base import ModuleBase
 
-from adafruit_motorkit import MotorKit
-
 logger = get_logger()
 
 
@@ -35,24 +33,35 @@ class MotorControl:
         '''
         offset = 0 if val == 0 else 0.28*val/abs(val)
         return clamp(val*0.72 + offset)
-        
+       
+
 class MotorControlModule(ModuleBase):
-    def __init__(self, state):
+    def __init__(self, state, simulated_motor_driver=None):
         DEFAULT_CADENCE_S = 0.002
         super().__init__(state, cadence=DEFAULT_CADENCE_S)
         self.start_time = time.time()
         self.last_control_time = None
-        
-        kit = MotorKit()
+
+        if simulated_motor_driver is not None:
+            # Running in offlinse sim mode
+            kit = simulated_motor_driver
+        else:
+            # Running in online mode
+            # Online only imports #
+            from adafruit_motorkit import MotorKit
+            ######################
+            kit = MotorKit()
         self.drive_state = state.drive_state
         # Port Motor
         self.port_motor = MotorControl(self.drive_state.port_motor, kit.motor3)
         # Starboard Motor
         self.sbrd_motor = MotorControl(self.drive_state.sbrd_motor, kit.motor4)
-        self.angle_control = PID(0.08, 0.08, 0.0011)
+        self.reset_pid(0.08, 0.08, 0.0011)
         self.angle_control.set_point(0.)
         #self.angle_control = PID(0.0550, 0.627, 0.002)
 
+    def reset_pid(self, Kp, Ki, Kd):
+        self.angle_control = PID(Kp, Ki, Kd)
 
     def step(self):
         # TODO make less trivial

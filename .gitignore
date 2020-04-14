@@ -1,4 +1,6 @@
 *.py[cod]
 */__pychache__*
 *.swp
+*.swo
 logs/*.log
+logs/sim/*.log

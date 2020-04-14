@@ -1,5 +1,3 @@
-from busio import I2C
-from board import SDA, SCL
 import json
 import logging
 import time
@@ -7,11 +5,7 @@ import time
 from libs.logger_setup import get_logger
 from modules.module_base import ModuleBase
 
-import adafruit_bno055
-
-
 logger = get_logger()
-
 
 class ImuReadTooSlow(Exception):
     pass
@@ -21,12 +15,22 @@ class TipTooFar(Exception):
 
 
 class ImuReadModule(ModuleBase):
-    def __init__(self, state):
+    def __init__(self, state, simulated_imu=None):
         DEFAULT_CADENCE_S = 0.002
         super().__init__(state, cadence=DEFAULT_CADENCE_S)
         self.imu_state = state.imu_state
-        self.sensor = adafruit_bno055.BNO055(I2C(SCL, SDA))
-        self.unrecoverable = 20.
+        if simulated_imu is not None:
+            # Running in offline sim mode
+            self.sensor = simulated_imu
+        else:
+            # Running in online mode
+            # Online only imports #
+            from busio import I2C
+            from board import SDA, SCL
+            import adafruit_bno055
+            #######################
+            self.sensor = adafruit_bno055.BNO055(I2C(SCL, SDA))
+        self.unrecoverable = 75.
         self.last_poll_time = None
         self.last_angle_y = None
 
@@ -47,14 +51,15 @@ class ImuReadModule(ModuleBase):
             if logger.getEffectiveLevel() <= logging.DEBUG:
                 data = {
                     'timestamp': t,
-                    'measured angle': angle_y
+                    'measured angle': angle_y,
+                    'measured d_angle': d_angle_y
                 }
                 logger.debug('IMU Data: {}'.format(json.dumps(data)))
-            if dt is not None and dt > 0.05:
+            if dt is not None and dt > 0.06:
                 msg = ('Duration since last IMU read is too high'
                        ' ({} s)'.format(dt))
                 logger.error(msg)
-                #raise ImuReadTooSlow(msg)
+                raise ImuReadTooSlow(msg)
             if abs(angle_y) > self.unrecoverable:
                 msg = 'igor tipped too far ({} degs)'.format(angle_y)
                 logger.error(msg)
