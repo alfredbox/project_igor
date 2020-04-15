@@ -61,11 +61,9 @@ class MotorImuSimulation:
         starting = time.monotonic()
         elapsed = 0
         while (elapsed < secs):
-            import pdb
-            #pdb.set_trace()
+            self.mc.step()
             self.imu.sensor.update(elapsed)
             self.imu.step()
-            self.mc.step()
             time.sleep(self.dt)
             t = time.monotonic()
             elapsed = t - starting 
@@ -75,7 +73,7 @@ if __name__ == "__main__":
     #kp 0.05 - 0.08
     #ki 0.01 - 0.2
     #kd 0.01 - 0.1
-    coeffs = (0.08, 0., 0.02)
-    sim = MotorImuSimulation(coeffs, -10., sin2, 0.006)
+    coeffs = (0.0, 0., 0.08)
+    sim = MotorImuSimulation(coeffs, -10., constant, 0.006)
     sim.sim_forward_for(3.)
 

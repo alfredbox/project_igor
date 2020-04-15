@@ -64,7 +64,8 @@ class MotorControlModule(ModuleBase):
         self.angle_control = PID(Kp, Ki, Kd)
 
     def step(self):
-        # TODO make less trivial
+        if not self.state.imu_state:
+            return
         angle = self.state.imu_state.angle_y
         d_angle = self.state.imu_state.d_angle_y
         signal = self.angle_control.signal(-angle, -d_angle)

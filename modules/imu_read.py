@@ -48,6 +48,7 @@ class ImuReadModule(ModuleBase):
             self.last_poll_time = t
             if d_angle_y is not None and dt is not None:
                 self.imu_state.d_angle_y = 0.9 * self.imu_state.d_angle_y + 0.1*d_angle_y/dt
+                self.imu_state.is_valid = True
             if logger.getEffectiveLevel() <= logging.DEBUG:
                 data = {
                     'timestamp': t,

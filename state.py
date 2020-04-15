@@ -23,6 +23,7 @@ class DriveState:
 
 class IMUState:
     def __init__(self):
+        is_valid = False
         self.angle_y = 0.
         self.d_angle_y = 0.
         self.angle_history = collections.deque(maxlen=QUEUE_LEN)
