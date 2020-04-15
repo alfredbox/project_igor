@@ -60,7 +60,7 @@ class ImuReadModule(ModuleBase):
                 msg = ('Duration since last IMU read is too high'
                        ' ({} s)'.format(dt))
                 logger.error(msg)
-                raise ImuReadTooSlow(msg)
+                #raise ImuReadTooSlow(msg)
             if abs(angle_y) > self.unrecoverable:
                 msg = 'igor tipped too far ({} degs)'.format(angle_y)
                 logger.error(msg)
