@@ -56,7 +56,8 @@ class MotorControlModule(ModuleBase):
         self.port_motor = MotorControl(self.drive_state.port_motor, kit.motor3)
         # Starboard Motor
         self.sbrd_motor = MotorControl(self.drive_state.sbrd_motor, kit.motor4)
-        self.reset_pid(0.08, 0.08, 0.0011)
+        #self.reset_pid(0.09, 0.5, 0.008)
+        self.reset_pid(0.095, 0.38, 0.0075)
         self.angle_control.set_point(0.)
         #self.angle_control = PID(0.0550, 0.627, 0.002)
 

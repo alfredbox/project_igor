@@ -30,13 +30,19 @@ class ImuReadModule(ModuleBase):
             import adafruit_bno055
             #######################
             self.sensor = adafruit_bno055.BNO055(I2C(SCL, SDA))
+            # read until sensor activates
+            e = 0
+            while e==0:
+                e = self.sensor.euler[1]
+                time.sleep(0.1)
+
         self.unrecoverable = 75.
         self.last_poll_time = None
         self.last_angle_y = None
 
     def step(self):
         angle_y = self.sensor.euler[1]
-        if angle_y is not None:
+        if angle_y is not None and abs(angle_y) < 1000:
             self.imu_state.angle_y = angle_y
             d_angle_y = (None if self.last_angle_y is None 
                          else angle_y - self.last_angle_y)
@@ -47,7 +53,7 @@ class ImuReadModule(ModuleBase):
                   else self.last_poll_time)
             self.last_poll_time = t
             if d_angle_y is not None and dt is not None:
-                self.imu_state.d_angle_y = 0.9 * self.imu_state.d_angle_y + 0.1*d_angle_y/dt
+                self.imu_state.d_angle_y = 0.5 * self.imu_state.d_angle_y + 0.5*d_angle_y/dt
                 self.imu_state.is_valid = True
             if logger.getEffectiveLevel() <= logging.DEBUG:
                 data = {
