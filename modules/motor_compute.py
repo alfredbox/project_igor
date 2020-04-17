@@ -1,7 +1,12 @@
+import json
+import logging
 from statistics import mean
 import time
 
+from libs.logger_setup import get_logger
 from modules.module_base import ModuleBase
+
+logger = get_logger()
 
 GEARING = 20.
 ENCODERMULT = 12.
@@ -83,6 +88,7 @@ class MotorCompute:
                                     + self.encoder_b.rpm()) / 2.0
 
 
+
 class MotorComputeModule(ModuleBase):
     def __init__(self, state):
         DEFAULT_CADENCE_S = 0.1
@@ -95,3 +101,17 @@ class MotorComputeModule(ModuleBase):
     def step(self):
         for m in self.motors:
             m.propagate_state()
+            if logger.getEffectiveLevel() <= logging.DEBUG:
+                self.log_motor_state()
+            
+    def log_motor_state():
+        data = {
+            'timestamp' : time.time()
+            'port_rpm': self.state.drive_state.port_motor.rpm,
+            'sbrd_rpm': self.state.drive_state.sbrd_motor.rpm
+        }
+        logger.debug('Motor Speed Data: {}'.format(json.dumps(data))
+
+
+
+

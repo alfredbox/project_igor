@@ -30,21 +30,37 @@ def throttle_angle_trace(data):
     plt.xlabel('Time s')
     plt.legend(['Throttle(x10)', 'Angle degs', 'd_Angle/dt (deg/s)'])
 
-def make_plots(data):
-    sample_freq(data)
-    throttle_angle_trace(data)
+def motor_speed_trace(data): 
+    times = [t['timestamp'] for t in data]
+    port_rpm = [t['port_rpm'] for t in data]
+    sbrd_rpm = [t['sbrd_rpm'] for t in data]
+    plt.figure(3)
+    plt.plot(times, port_rpm, times, sbrd_rpm)
+    plt.xlabel('Time s')
+    plt.legend(['Port motor speed (RPM)', 'Starbord motor speed (RPM)'])
+
+def make_plots(control_data, motor_data):
+    sample_freq(control_data)
+    throttle_angle_trace(control_data)
+    motor_speed_trace(motor_data)
     plt.show()
     
 
 def process(filename):
-    data = []
+    control_data = []
+    motor_data = []
     with open(filename, 'r') as f:
         for l in f.readlines():
             if 'DEBUG:igor:Control Data:' in l:
                 s = l.replace('DEBUG:igor:Control Data:', '')
                 d = json.loads(s)
-                data.append(d)
-    make_plots(data)
+                control_data.append(d)
+            elif 'DEBUG:igor:Motor Speed Data' in l:
+                s = l.replace('DEBUG:igor:Motor Speed Data:', '')
+                d = json.loads(s)
+                motor_data.append(d)
+                
+    make_plots(control_data, motor_data)
 
 def latest(directory):
     fl = os.listdir(directory)

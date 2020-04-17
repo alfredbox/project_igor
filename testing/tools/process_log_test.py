@@ -10,7 +10,7 @@ TMP_LOG = '/tmp/igor_test_log.log'
 
 logging.basicConfig(filename=TMP_LOG)
 
-logger = logging.getLogger('Igor')
+logger = logging.getLogger('igor')
 logger.setLevel(logging.DEBUG)
 
 class TestProcessLog(unittest.TestCase):
@@ -23,9 +23,19 @@ class TestProcessLog(unittest.TestCase):
             data = {
                 'timestamp': t,
                 'set_throttle': math.sin(t),
-                'control_angle': math.cos(t)
+                'control_angle': math.cos(t),
+                'control_d_angle': math.cos(2*t)
             }
             logger.debug('Control Data: {}'.format(json.dumps(data)))
+
+        for x in range(100):
+            t = x * 1/100.
+            data = {
+                'timestamp': t,
+                'port_rpm': math.sin(t),
+                'sbrd_rpm': math.cos(t)
+            }
+            logger.debug('Motor Speed Data: {}'.format(json.dumps(data)))
 
     def tearDown(self):
         os.remove(TMP_LOG)
