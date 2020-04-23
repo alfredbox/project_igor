@@ -31,8 +31,8 @@ class MotorControl:
         Motor response to the throttle is mostly linear save for a deadband
         between +-0.3 this removes that deadband to linearize the response.
         '''
-        offset = 0 if val == 0 else 0.28*val/abs(val)
-        return clamp(val*0.72 + offset)
+        offset = 0 if val == 0 else 0.2*val/abs(val)
+        return clamp(val*0.8 + offset)
        
 
 class MotorControlModule(ModuleBase):
@@ -56,8 +56,8 @@ class MotorControlModule(ModuleBase):
         self.port_motor = MotorControl(self.drive_state.port_motor, kit.motor3)
         # Starboard Motor
         self.sbrd_motor = MotorControl(self.drive_state.sbrd_motor, kit.motor4)
-        #self.reset_pid(0.09, 0.5, 0.008)
-        self.reset_pid(0.095, 0.38, 0.0075)
+        self.reset_pid(0.09*0.85, 0.5*0.85, 0.009*0.85)
+        #self.reset_pid(0.7, 0.0, 0.00)
         self.angle_control.set_point(0.)
         #self.angle_control = PID(0.0550, 0.627, 0.002)
 

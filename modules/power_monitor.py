@@ -35,6 +35,6 @@ class PowerMonitorModule(ModuleBase):
             if len(throttled_binary) > position and throttled_binary[0 - position - 1] == '1':
                 if position == 0:
                     logger.error(message)
-                    raise LowPower(message)
+                    #raise LowPower(message)
                 else:
                     logger.warning(message)

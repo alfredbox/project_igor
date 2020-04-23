@@ -104,13 +104,19 @@ class MotorComputeModule(ModuleBase):
             if logger.getEffectiveLevel() <= logging.DEBUG:
                 self.log_motor_state()
             
-    def log_motor_state():
+    def log_motor_state(self):
+        p_rpm = self.state.drive_state.port_motor.rpm
+        if self.state.drive_state.port_motor.direction:
+            p_rpm *= -1
+        s_rpm = self.state.drive_state.sbrd_motor.rpm
+        if self.state.drive_state.sbrd_motor.direction:
+            s_rpm *= -1
         data = {
-            'timestamp' : time.time()
-            'port_rpm': self.state.drive_state.port_motor.rpm,
-            'sbrd_rpm': self.state.drive_state.sbrd_motor.rpm
+            'timestamp' : time.time(),
+            'port_rpm': p_rpm,
+            'sbrd_rpm': s_rpm
         }
-        logger.debug('Motor Speed Data: {}'.format(json.dumps(data))
+        logger.debug('Motor Speed Data: {}'.format(json.dumps(data)))
 
 
 
