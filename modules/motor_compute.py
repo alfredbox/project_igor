@@ -101,8 +101,8 @@ class MotorComputeModule(ModuleBase):
     def step(self):
         for m in self.motors:
             m.propagate_state()
-            if logger.getEffectiveLevel() <= logging.DEBUG:
-                self.log_motor_state()
+        if logger.getEffectiveLevel() <= logging.DEBUG:
+            self.log_motor_state()
             
     def log_motor_state(self):
         p_rpm = self.state.drive_state.port_motor.rpm
