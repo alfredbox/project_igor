@@ -4,10 +4,10 @@ from modules.module_base import ModuleBase
 
 from gpiozero import DigitalInputDevice
 
-PORT_GREEN = 12
-SBRD_GREEN = 13
-PORT_WHITE = 5
-SBRD_WHITE = 6
+PORT_GREEN = 13
+SBRD_GREEN = 12
+PORT_WHITE = 6
+SBRD_WHITE = 5
 
 class MotorEncoderPair:
     def __init__(self, pin_a, pin_b, motor_state):

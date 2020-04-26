@@ -16,9 +16,10 @@ class ControlTooSlow(Exception):
 
 
 class MotorControl:
-    def __init__(self, motor_state, controller):
+    def __init__(self, motor_state, controller, offset):
         self.controller = controller
         self.motor_state = motor_state
+        self.offset = offset
 
     def set_throttle(self, val):
         assert (val <= 1. and val >= -1.), (
@@ -29,10 +30,11 @@ class MotorControl:
     def _deadband_rm(self, val):
         '''Remove deadband to linearize response.
         Motor response to the throttle is mostly linear save for a deadband
-        between +-0.3 this removes that deadband to linearize the response.
+        between +-self.offset this removes that deadband to linearize 
+        the response.
         '''
-        offset = 0 if val == 0 else 0.2*val/abs(val)
-        return clamp(val*0.8 + offset)
+        offset = 0 if val == 0 else self.offset*val/abs(val)
+        return clamp(val*(1.-self.offset) + offset)
        
 
 class MotorControlModule(ModuleBase):
@@ -53,9 +55,15 @@ class MotorControlModule(ModuleBase):
             kit = MotorKit()
         self.drive_state = state.drive_state
         # Port Motor
-        self.port_motor = MotorControl(self.drive_state.port_motor, kit.motor3)
+        self.port_motor = MotorControl(
+                self.drive_state.port_motor, 
+                kit.motor3,
+                0.25)
         # Starboard Motor
-        self.sbrd_motor = MotorControl(self.drive_state.sbrd_motor, kit.motor4)
+        self.sbrd_motor = MotorControl(
+                self.drive_state.sbrd_motor, 
+                kit.motor4,
+                0.2)
         self.reset_pid(0.09*0.85, 0.5*0.85, 0.009*0.85)
         #self.reset_pid(0.7, 0.0, 0.00)
         self.angle_control.set_point(0.)

@@ -16,7 +16,7 @@ class TestMotorController(unittest.TestCase):
 
     def test_deadband(self):
         motor_control = mc.MotorControl(
-            self.port_motor_state, self.port_controller)
+            self.port_motor_state, self.port_controller, 0.3)
         null = 0
         self.assertEqual(motor_control._deadband_rm(null), null)
         uno = 1
@@ -30,7 +30,7 @@ class TestMotorController(unittest.TestCase):
 
     def test_throttle_set(self):
         motor_control = mc.MotorControl(
-            self.port_motor_state, self.port_controller)
+                self.port_motor_state, self.port_controller, 0.3)
         null = 0
         motor_control.set_throttle(null)
         self.assertEqual(self.port_motor_state.throttle, null)
@@ -51,6 +51,10 @@ class TestMotorController(unittest.TestCase):
         motor_control.set_throttle(mtiny)
         self.assertEqual(self.port_motor_state.throttle, mtiny)
         self.assertLess(self.port_controller.throttle, -0.3)
+        motor_control.set_throttle(uno-tiny)
+        self.assertLess(self.port_controller.throttle, uno)
+        motor_control.set_throttle(muno-mtiny)
+        self.assertGreater(self.port_controller.throttle, muno)
 
         
 if __name__ == "__main__":
