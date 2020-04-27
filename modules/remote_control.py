@@ -23,15 +23,21 @@ class RemoteControlModule(ModuleBase):
         self.server.listen(BACKLOG)
         self.troll_connected = False
         self.client = None
+        print("Server ready")
 
     def handshake_troll(self):
         try:
+            print("Server trying to connect")
             self.client, address = self.server.accept()
+            print("server connected")
             self.client.setblocking(False)
+            print("Server waiting for data")
             data = self.client.recv(SIZE)
-            if data:
+            print("Server has recieved data")
+            if "Hello Igor" in str(data):
                 print(data)
                 self.troll_connected = True
+                self.client.send(bytes('Hello Troll', 'UTF-8'))
         except socket.error:
             if self.client:
                 self.client.close()
