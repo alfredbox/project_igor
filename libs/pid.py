@@ -1,9 +1,14 @@
+import json
+import logging
 import time
 
 from libs.clamp import clamp   
+from libs.logger_setup import get_logger
+
+logger = get_logger()
 
 class PID:
-    def __init__(self, Kp, Ki, Kd, lo=-1, hi=1):
+    def __init__(self, Kp, Ki, Kd, lo=-1, hi=1, name="pid"):
         self.Kp = Kp
         self.Ki = Ki
         self.Kd = Kd
@@ -13,6 +18,7 @@ class PID:
         self.set_point(0.)
         self.lastpoint = None
         self.time = time.monotonic()
+        self.name = name
 
     def set_point(self, point):
         self._setpoint = point
@@ -37,5 +43,15 @@ class PID:
         # Advance stored data
         self.time += dt
         self.lastpoint = value
+
+        if logger.getEffectiveLevel() <= logging.DEBUG:
+            data = {
+                'timestamp': self.time,
+                'p': p,
+                'i': i,
+                'd': d,
+                'pid': p+i-d
+            }
+            logger.debug('{} data: {}'.format(self.name, json.dumps(data)))
 
         return clamp(p+i-d, lo=self.lo, hi=self.hi)
