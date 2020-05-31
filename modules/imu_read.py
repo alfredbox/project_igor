@@ -53,7 +53,7 @@ class ImuReadModule(ModuleBase):
                   else self.last_poll_time)
             self.last_poll_time = t
             if d_angle_y is not None and dt is not None:
-                self.imu_state.d_angle_y = 0.5 * self.imu_state.d_angle_y + 0.5*d_angle_y/dt
+                self.imu_state.d_angle_y = 0.2* self.imu_state.d_angle_y + 0.8*d_angle_y/dt
                 self.imu_state.is_valid = True
             if logger.getEffectiveLevel() <= logging.DEBUG:
                 data = {

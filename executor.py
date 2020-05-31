@@ -29,7 +29,7 @@ def assemble_modules():
     # Imu Reader    
     modules.append(imu_read.ImuReadModule(s))
     # Power monitoring
-    modules.append(power_monitor.PowerMonitorModule(s))
+    #modules.append(power_monitor.PowerMonitorModule(s))
     return modules
 
 async def add_module(module):
