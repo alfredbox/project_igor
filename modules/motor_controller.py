@@ -64,11 +64,11 @@ class MotorControlModule(ModuleBase):
                 self.drive_state.sbrd_motor, 
                 kit.motor4,
                 0.2)
-        #self.reset_pid(0.24, 0.5, 0.009)
+        #self.reset_pid(0.24, 0.5 0.009)
         #self.reset_pid(0.079,  0.6, 0.013)
-        self.reset_pid(0.11, 0.9, 0.011)
-        self.angle_control.set_point(-0.1)
-        #self.angle_control = PID(0.0550, 0.627, 0.002)
+        self.reset_pid(0.13, 0.275, 0.0075)
+        #self.reset_pid(0.0055, 0.625, 0.002)
+        self.angle_control.set_point(1.0)
 
     def reset_pid(self, Kp, Ki, Kd):
         self.angle_control = PID(Kp, Ki, Kd)
