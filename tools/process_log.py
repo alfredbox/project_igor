@@ -49,18 +49,33 @@ def angle_pid_trace(data):
     plt.plot(times, p, times, i, times, d, times, pid)
     plt.xlabel('Time s')
     plt.legend(['P', 'I', 'D', 'PID'])
+    plt.title('Angle PID')
     
-def make_plots(control_data, motor_data, angle_pid_data):
+def speed_pid_trace(data):
+    times = [t['timestamp'] for t in data]
+    p = [t['p'] for t in data]
+    i = [t['i'] for t in data]
+    d = [t['d'] for t in data]
+    pid = [t['pid'] for t in data]
+    plt.figure(5)
+    plt.plot(times, p, times, i, times, d, times, pid)
+    plt.xlabel('Time s')
+    plt.legend(['P', 'I', 'D', 'PID'])
+    plt.title('Speed PID')
+
+def make_plots(control_data, motor_data, angle_pid_data, speed_pid_data):
     sample_freq(control_data)
     throttle_angle_trace(control_data)
     motor_speed_trace(motor_data)
     angle_pid_trace(angle_pid_data)
+    speed_pid_trace(speed_pid_data)
     plt.show()
 
 def process(filename):
     control_data = []
     motor_data = []
     angle_pid_data = []
+    speed_pid_data = []
     with open(filename, 'r') as f:
         for l in f.readlines():
             if 'DEBUG:igor:Control Data:' in l:
@@ -71,10 +86,14 @@ def process(filename):
                 s = l.replace('DEBUG:igor:Motor Speed Data:', '')
                 d = json.loads(s)
                 motor_data.append(d)
-            elif 'DEBUG:igor:pid data' in l:
-                s = l.replace('DEBUG:igor:pid data:', '')
+            elif 'DEBUG:igor:angle_pid data' in l:
+                s = l.replace('DEBUG:igor:angle_pid data:', '')
                 d = json.loads(s)
                 angle_pid_data.append(d)
+            elif 'DEBUG:igor:speed_pid data' in l:
+                s = l.replace('DEBUG:igor:speed_pid data:', '')
+                d = json.loads(s)
+                speed_pid_data.append(d)
                 
     make_plots(control_data, motor_data, angle_pid_data)
 

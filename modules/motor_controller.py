@@ -64,23 +64,25 @@ class MotorControlModule(ModuleBase):
                 self.drive_state.sbrd_motor, 
                 kit.motor4,
                 0.2)
-        #self.reset_pid(0.24, 0.5 0.009)
-        #self.reset_pid(0.079,  0.6, 0.013)
-        self.reset_pid(0.13, 0.275, 0.0075)
-        #self.reset_pid(0.0055, 0.625, 0.002)
-        self.angle_control.set_point(1.0)
-
-    def reset_pid(self, Kp, Ki, Kd):
-        self.angle_control = PID(Kp, Ki, Kd)
+        self.angle_control = PID(0.13, 0.275, 0.0075)
+        self.angle_control.set_point(0.0)
+        self.speed_control = PID(0.0, 0.1, 0.0, name='speed_pid')
+        self.speed_control.setpoint(0.0)
 
     def step(self):
         if not self.state.imu_state:
             return
+        # Speed Control
+        average_speed = ((self.drive_state.port_motor.rpm + 
+                          self.drive_state.sbrd_motor.rpm) / 2.0)
+        speed_signal = self.speed_control.signal(average_speed)
+        # Angle Control
+        self.angle_control.set_point(speed_signal)
         angle = self.state.imu_state.angle_y
         d_angle = self.state.imu_state.d_angle_y
-        signal = self.angle_control.signal(-angle, -d_angle)
-        self.port_motor.set_throttle(signal)
-        self.sbrd_motor.set_throttle(signal)
+        angle_signal = self.angle_control.signal(-angle, -d_angle)
+        self.port_motor.set_throttle(angle_signal)
+        self.sbrd_motor.set_throttle(angle_signal)
         t = time.time()
         dt = (t - self.last_control_time 
               if self.last_control_time is not None 
