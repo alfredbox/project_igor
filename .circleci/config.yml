@@ -12,7 +12,7 @@ jobs:
       - python/install-deps
       - python/save-cache
       - run:
-          command: python3 -m testing.libs.clamp_test
+          command: python3 -m unittest discover -p "*_test.py"
           name: Test
 
 workflows:
