@@ -2,8 +2,6 @@ import time
 
 from modules.module_base import ModuleBase
 
-from gpiozero import DigitalInputDevice
-
 PORT_GREEN = 13
 SBRD_GREEN = 12
 PORT_WHITE = 6
@@ -19,6 +17,7 @@ class MotorEncoderPair:
 
 class MotorEncoder:
     def __init__(self, pin, encoder_state):
+        from gpiozero import DigitalInputDevice
         self.encoder = DigitalInputDevice(pin)
         self.activation_history = encoder_state.activation_history
         self.direction_history = encoder_state.direction_history

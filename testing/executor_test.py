@@ -15,6 +15,9 @@ class WaitAndSetState:
         await asyncio.sleep(1)
         self.task_state.end_time = time.time()
 
+    def cleanup(self):
+        pass
+
 
 def helper_assemble_modules(state):
     set_a = WaitAndSetState(state.task_a)
