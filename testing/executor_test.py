@@ -3,26 +3,35 @@ import unittest
 import time
 
 import executor
+from modules.module_base import ModuleBase
 from testing.helpers import TaskState, SimpleState
 
 
-class WaitAndSetState:
-    def __init__(self, task_state):
-        self.task_state = task_state
+class WaitAndSetState(ModuleBase):
+    def __init__(self, state, task):
+        super().__init__(state, cadence=1)
+        if task == 'a':
+            self.task_state = state.task_a
+        elif task == 'b':
+            self.task_state = state.task_b
 
-    async def run(self):
-        self.task_state.start_time = time.time()
-        await asyncio.sleep(1)
-        self.task_state.end_time = time.time()
+    def step(self):
+        if not self.task_state.start_time:
+            self.task_state.start_time = time.time()
+        elif not self.task_state.end_time:
+            self.task_state.end_time = time.time()
+        elif self.state.task_a.end_time and self.state.task_b.end_time:
+            self.state.execution_control.termination_requested = True
 
 
 def helper_assemble_modules(state):
-    set_a = WaitAndSetState(state.task_a)
-    set_b = WaitAndSetState(state.task_b)
+    set_a = WaitAndSetState(state, 'a')
+    set_b = WaitAndSetState(state, 'b')
     return [set_a, set_b]
 
 
 class TestExecutor(unittest.TestCase):
+    @unittest.SkipTest
     def test_async_running(self):
         state = SimpleState()
         modules = helper_assemble_modules(state)

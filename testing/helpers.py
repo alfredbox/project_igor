@@ -2,14 +2,17 @@ import time
 
 import modules.motor_controller as motor_controller
 import modules.module_base as module_base
+from state import State
+
 class TaskState:
     def __init__(self):
         self.start_time = 0
         self.end_time = 0
 
 
-class SimpleState:
+class SimpleState(State):
     def __init__(self):
+        super().__init__()
         self.task_a = TaskState()
         self.task_b = TaskState()
 

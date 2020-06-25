@@ -16,7 +16,8 @@ class TestPowerMonitorModule(unittest.TestCase):
         terminator = Terminator(state, term_after_s=15)
         self.modules.append(terminator)
         executor.execute(self.modules)
-
+    
+    @unittest.SkipTest
     def test_power_monitor(self):
         s = state.State()
         mod = power_monitor.PowerMonitorModule(s) 

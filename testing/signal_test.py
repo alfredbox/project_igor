@@ -16,6 +16,9 @@ class Transmitter:
         signal.alarm(1)
         await asyncio.sleep(0.5)
         self.task_state.end_time = time.time()
+    
+    def cleanup(self):
+        pass
 
     
 class Reciever:
@@ -29,6 +32,9 @@ class Reciever:
         self.task_state.start_time = time.time()     
         signal.signal(signal.SIGALRM, self.handler)
         await asyncio.sleep(1.1)
+
+    def cleanup(self):
+        pass
    
 
 def helper_assemble_modules(state):

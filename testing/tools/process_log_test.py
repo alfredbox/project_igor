@@ -2,13 +2,10 @@ import json
 import logging
 import math
 import os
+import tempfile
 import unittest
 
 import tools.process_log as process_log
-
-TMP_LOG = '/tmp/igor_test_log.log'
-
-logging.basicConfig(filename=TMP_LOG)
 
 logger = logging.getLogger('igor')
 logger.setLevel(logging.DEBUG)
@@ -16,6 +13,8 @@ logger.setLevel(logging.DEBUG)
 class TestProcessLog(unittest.TestCase):
     def setUp(self):
         # Create a dum:wmy log
+        self.log = tempfile.NamedTemporaryFile(suffix='igor_test_log.log')   
+        logging.basicConfig(filename=self.log)
         logger.error("A test error")
         logger.warning('A test warning')
         for x in range(100):
@@ -38,10 +37,10 @@ class TestProcessLog(unittest.TestCase):
             logger.debug('Motor Speed Data: {}'.format(json.dumps(data)))
 
     def tearDown(self):
-        os.remove(TMP_LOG)
+       self.log.close()
 
     def test_process_log(self):
-        process_log.process(TMP_LOG) 
+        process_log.process(self.log.name, plot=False) 
         
 
         
