@@ -71,7 +71,7 @@ def make_plots(control_data, motor_data, angle_pid_data, speed_pid_data):
     speed_pid_trace(speed_pid_data)
     plt.show()
 
-def process(filename):
+def process(filename, plot=True):
     control_data = []
     motor_data = []
     angle_pid_data = []
@@ -95,7 +95,8 @@ def process(filename):
                 d = json.loads(s)
                 speed_pid_data.append(d)
                 
-    make_plots(control_data, motor_data, angle_pid_data)
+    if plot:
+        make_plots(control_data, motor_data, angle_pid_data)
 
 def latest(directory):
     fl = os.listdir(directory)
