@@ -96,7 +96,7 @@ def process(filename, plot=True):
                 speed_pid_data.append(d)
                 
     if plot:
-        make_plots(control_data, motor_data, angle_pid_data)
+        make_plots(control_data, motor_data, angle_pid_data, speed_pid_data)
 
 def latest(directory):
     fl = os.listdir(directory)

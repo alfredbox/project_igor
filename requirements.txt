@@ -1,3 +1,4 @@
 adafruit-circuitpython-motorkit
 adafruit-circuitpython-bno055
+matplotlib
 
