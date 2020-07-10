@@ -64,10 +64,10 @@ class MotorControlModule(ModuleBase):
                 self.drive_state.sbrd_motor, 
                 kit.motor4,
                 0.2)
-        self.angle_control = PID(0.13, 0.275, 0.0075)
+        self.angle_control = PID(0.13, 0.275, 0.0075, name='angle_pid')
         self.angle_control.set_point(0.0)
-        self.speed_control = PID(0.0, 0.1, 0.0, name='speed_pid')
-        self.speed_control.setpoint(0.0)
+        self.speed_control = PID(0.0, 0.05, 0.0, lo=-2.5, hi=2.5, name='speed_pid')
+        self.speed_control.set_point(0.0)
 
     def step(self):
         if not self.state.imu_state:
@@ -75,9 +75,10 @@ class MotorControlModule(ModuleBase):
         # Speed Control
         average_speed = ((self.drive_state.port_motor.rpm + 
                           self.drive_state.sbrd_motor.rpm) / 2.0)
+        average_speed = average_speed if self.drive_state.port_motor.direction else -average_speed
         speed_signal = self.speed_control.signal(average_speed)
         # Angle Control
-        self.angle_control.set_point(speed_signal)
+        self.angle_control.set_point(-speed_signal)
         angle = self.state.imu_state.angle_y
         d_angle = self.state.imu_state.d_angle_y
         angle_signal = self.angle_control.signal(-angle, -d_angle)
@@ -91,7 +92,7 @@ class MotorControlModule(ModuleBase):
         if logger.getEffectiveLevel() <= logging.DEBUG:
             data = {
                 'timestamp': t,
-                'set_throttle': signal,
+                'set_throttle': angle_signal,
                 'control_angle': angle,
                 'control_d_angle': d_angle
             }
