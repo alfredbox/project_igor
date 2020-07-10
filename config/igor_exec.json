@@ -1,0 +1,29 @@
+{
+    "executor_name": "Igor",
+    "state": "state",
+    "modules_config": {
+        "shared_state": "state",
+        "modules": [
+            {
+                "python_module": "modules.motor_read",
+                "class": "MotorReadModule",
+                "config": ""
+            },
+            {
+                "python_module": "modules.motor_compute",
+                "class": "MotorComputeModule",
+                "config": ""
+            },
+            {
+                "python_module": "modules.motor_controller",
+                "class": "MotorControlModule",
+                "config": ""
+            },
+            {
+                "python_module": "modules.imu_read",
+                "class": "ImuReadModule",
+                "config": ""
+            }
+        ]
+    }
+}

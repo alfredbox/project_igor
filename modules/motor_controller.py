@@ -45,7 +45,7 @@ class MotorControlModule(ModuleBase):
         self.last_control_time = None
 
         if simulated_motor_driver is not None:
-            # Running in offlinse sim mode
+            # Running in offline sim mode
             kit = simulated_motor_driver
         else:
             # Running in online mode
