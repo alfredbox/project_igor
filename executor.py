@@ -40,7 +40,6 @@ def execute(modules):
     try:
         loop = asyncio.get_event_loop()
         loop.run_until_complete(execute_main())
-        loop.close()
     finally:
         cleanup(modules)
 
