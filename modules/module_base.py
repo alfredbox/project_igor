@@ -1,9 +1,13 @@
 import asyncio
+import json
 import time
 
 class ModuleBase:
-    def __init__(self, state, cadence=None):
+    def __init__(self, state, config="", cadence=None):
         self.state = state
+        if config:
+            with open(config, 'r') as f:
+                self.config = json.load(f)
         self.cadence = cadence
         self.logging = False
         self.execution_log = []

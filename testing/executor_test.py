@@ -4,15 +4,25 @@ import time
 
 import executor
 from modules.module_base import ModuleBase
-from testing.helpers import TaskState, SimpleState
+import state
 
+class TaskState:
+    def __init__(self):
+        self.start_time = 0
+        self.end_time = 0
 
-class WaitAndSetState(ModuleBase):
-    def __init__(self, state, task):
-        super().__init__(state, cadence=1)
-        if task == 'a':
+class State(state.State):
+    def __init__(self):
+        super().__init__()
+        self.task_a = TaskState()
+        self.task_b = TaskState()
+
+class WaitAndSetState(ModuleBase, unittest.TestCase):
+    def __init__(self, state, config=""):
+        super().__init__(state, config=config, cadence=1)
+        if self.config["task_id"] == 'a':
             self.task_state = state.task_a
-        elif task == 'b':
+        elif self.config["task_id"] == 'b':
             self.task_state = state.task_b
 
     def step(self):
@@ -23,34 +33,29 @@ class WaitAndSetState(ModuleBase):
         elif self.state.task_a.end_time and self.state.task_b.end_time:
             self.state.execution_control.termination_requested = True
 
+    def cleanup(self):
+        tc = unittest.TestCase()
+        tc.assertGreater(self.state.task_a.start_time, 0)
+        tc.assertGreater(self.state.task_b.start_time, 0)
+        tc.assertAlmostEqual(
+            self.state.task_a.start_time,
+            self.state.task_b.start_time,
+            places=3)
+        tc.assertGreaterEqual(
+            (self.state.task_a.end_time - self.state.task_a.start_time),
+            1)
+        tc.assertGreaterEqual(
+            (self.state.task_b.end_time - self.state.task_b.start_time), 
+            1)
+        tc.assertAlmostEqual(
+            self.state.task_a.end_time, 
+            self.state.task_b.end_time, 
+            places=3)
 
-def helper_assemble_modules(state):
-    set_a = WaitAndSetState(state, 'a')
-    set_b = WaitAndSetState(state, 'b')
-    return [set_a, set_b]
+class TestExecutor(unittest.TestCase): 
 
-
-class TestExecutor(unittest.TestCase):
-    @unittest.SkipTest
     def test_async_running(self):
-        state = SimpleState()
-        modules = helper_assemble_modules(state)
-        executor.execute(modules)
-
-        self.assertGreater(state.task_a.start_time, 0)
-        self.assertGreater(state.task_b.start_time, 0)
-        self.assertAlmostEqual(state.task_a.start_time, 
-                               state.task_b.start_time, 
-                               places=3)
-        self.assertGreaterEqual(
-            (state.task_a.end_time - state.task_a.start_time),
-            1)
-        self.assertGreaterEqual(
-            (state.task_b.end_time - state.task_b.start_time), 
-            1)
-        self.assertAlmostEqual(state.task_a.end_time, 
-                               state.task_b.end_time, 
-                               places=3)
+        executor.main("testing/config/test_exec.json")
 
 
 if __name__ == '__main__':

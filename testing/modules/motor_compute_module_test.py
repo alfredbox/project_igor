@@ -4,8 +4,6 @@ import time
 import modules.motor_compute as motor_compute
 import state
 
-from testing.helpers import TaskState, SimpleState
-
 
 class TestEncoderCompute(unittest.TestCase):
     def setUp(self):

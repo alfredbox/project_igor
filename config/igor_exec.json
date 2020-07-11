@@ -1,6 +1,5 @@
 {
     "executor_name": "Igor",
-    "state": "state",
     "modules_config": {
         "shared_state": "state",
         "modules": [

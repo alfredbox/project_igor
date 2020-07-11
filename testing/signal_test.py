@@ -4,7 +4,7 @@ import signal
 import time
 
 import executor
-from testing.helpers import TaskState, SimpleState
+from testing.executor_test import TaskState, State
 
 
 class Transmitter:
@@ -19,7 +19,6 @@ class Transmitter:
     
     def cleanup(self):
         pass
-
     
 class Reciever:
     def __init__(self, task_state):
@@ -45,7 +44,7 @@ def helper_assemble_modules(state):
 
 class TestSignalling(unittest.TestCase):
     def test_async_signals(self):
-        state = SimpleState()
+        state = State()
         modules = helper_assemble_modules(state)
         executor.execute(modules)
 

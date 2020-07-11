@@ -4,12 +4,6 @@ import importlib
 import json
 
 import libs.logger_setup as logger_setup
-import modules.imu_read as imu_read
-import modules.motor_read as motor_read
-import modules.motor_compute as motor_compute
-import modules.motor_controller as motor_controller
-import modules.power_monitor as power_monitor
-import modules.state_printer as state_printer
 
 # Logging
 logger_setup.setup()
@@ -24,7 +18,8 @@ def assemble_modules(modules_cfg):
     for module_cfg in modules_cfg["modules"]:
         m = importlib.import_module(module_cfg["python_module"])
         mc = getattr(m, module_cfg["class"])
-        modules.append(mc(s))
+        c = module_cfg["config"]
+        modules.append(mc(s, config=c))
 
     return modules
 
