@@ -1,0 +1,18 @@
+{
+    "executor_name": "Executor test",
+    "modules_config": {
+        "shared_state": "testing.executor_test",
+        "modules": [
+            {
+                "python_module": "testing.executor_test",
+                "class": "WaitAndSetState",
+                "config": "testing/config/modules/wait_and_set_state_a_cfg.json"
+            },
+            {
+                "python_module": "testing.executor_test",
+                "class": "WaitAndSetState",
+                "config": "testing/config/modules/wait_and_set_state_b_cfg.json"
+            }
+        ]
+    }
+}

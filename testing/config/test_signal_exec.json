@@ -1,0 +1,18 @@
+{
+    "executor_name": "Signal test",
+    "modules_config": {
+        "shared_state": "testing.executor_test",
+        "modules": [
+            {
+                "python_module": "testing.signal_test",
+                "class": "Transmitter",
+                "config": ""
+            },
+            {
+                "python_module": "testing.signal_test",
+                "class": "Reciever",
+                "config": ""
+            }
+        ]
+    }
+}

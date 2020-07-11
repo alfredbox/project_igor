@@ -1,64 +1,69 @@
-import asyncio
 import unittest
 import signal
 import time
 
 import executor
+from modules.module_base import ModuleBase
 from testing.executor_test import TaskState, State
 
 
-class Transmitter:
-    def __init__(self, task_state):
-        self.task_state = task_state
+class Transmitter(ModuleBase):
+    def __init__(self, state, config=""):
+        super().__init__(state, cadence=0.5)
+        self.task_state = self.state.task_a
 
-    async def run(self):
-        self.task_state.start_time = time.time()
-        signal.alarm(1)
-        await asyncio.sleep(0.5)
-        self.task_state.end_time = time.time()
-    
-    def cleanup(self):
-        pass
-    
-class Reciever:
-    def __init__(self, task_state):
-        self.task_state = task_state
-    
+    def step(self):
+        if not self.task_state.start_time:
+            self.task_state.start_time = time.time()
+        elif not self.task_state.end_time:
+            signal.alarm(1)
+            self.task_state.end_time = time.time()
+        elif self.state.task_a.end_time and self.state.task_b.end_time:
+            self.state.execution_control.termination_requested = True
+
+
+class Reciever(ModuleBase):
+    def __init__(self, state, config=""):
+        super().__init__(state, cadence=1.1)
+        self.task_state = self.state.task_b
+
     def handler(self, signm, frame):
         self.task_state.end_time = time.time()
 
-    async def run(self):
-        self.task_state.start_time = time.time()     
-        signal.signal(signal.SIGALRM, self.handler)
-        await asyncio.sleep(1.1)
+    def step(self):
+        if not self.task_state.start_time:
+            self.task_state.start_time = time.time()
+            signal.signal(signal.SIGALRM, self.handler)
+        elif self.state.task_a.end_time and self.state.task_b.end_time:
+            self.state.execution_control.termination_requested = True 
 
     def cleanup(self):
-        pass
-   
+        tc = unittest.TestCase()
+        tc.assertGreater(self.state.task_a.start_time, 0)
+        tc.assertGreater(self.state.task_b.start_time, 0)
+        tc.assertAlmostEqual(0.6, 
+                             abs(self.state.task_a.start_time - 
+                                 self.state.task_b.start_time),
+                             places=3)
+        tc.assertGreaterEqual(
+            (self.state.task_b.end_time - self.state.task_b.start_time),
+            0.6)
+        task_a_elapsed = (self.state.task_a.end_time - 
+                          self.state.task_a.start_time)
+        tc.assertGreaterEqual(task_a_elapsed, 0.5)
+        tc.assertLess(task_a_elapsed, 1.0)
+
 
 def helper_assemble_modules(state):
-    tx = Transmitter(state.task_a)
-    rx = Reciever(state.task_b)
+    tx = Transmitter(state)
+    rx = Reciever(state)
     return [tx, rx]
 
 
 class TestSignalling(unittest.TestCase):
+    #@unittest.SkipTest
     def test_async_signals(self):
-        state = State()
-        modules = helper_assemble_modules(state)
-        executor.execute(modules)
-
-        self.assertGreater(state.task_a.start_time, 0)
-        self.assertGreater(state.task_b.start_time, 0)
-        self.assertAlmostEqual(state.task_a.start_time, 
-                               state.task_b.start_time, 
-                               places=3)
-        self.assertGreaterEqual(
-            (state.task_b.end_time - state.task_b.start_time),
-            1)
-        task_a_elapsed = state.task_a.end_time - state.task_a.start_time
-        self.assertGreaterEqual(task_a_elapsed, 0.5)
-        self.assertLess(task_a_elapsed, 1.0)
+        executor.main("testing/config/test_signal_exec.json")
 
 
 if __name__ == '__main__':

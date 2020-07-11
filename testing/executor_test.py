@@ -1,4 +1,3 @@
-import asyncio
 import unittest
 import time
 
@@ -17,7 +16,7 @@ class State(state.State):
         self.task_a = TaskState()
         self.task_b = TaskState()
 
-class WaitAndSetState(ModuleBase, unittest.TestCase):
+class WaitAndSetState(ModuleBase):
     def __init__(self, state, config=""):
         super().__init__(state, config=config, cadence=1)
         if self.config["task_id"] == 'a':
