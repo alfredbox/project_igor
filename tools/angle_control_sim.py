@@ -20,41 +20,17 @@ class SimulatedMotorDriver:
         self.motor3 = SimulatedMotorController()
         self.motor4 = SimulatedMotorController()
 
-class SimulatedIMU:
-    def __init__(self, angle_0, policy):
-        self.angle = angle_0
-        self.angle_0 = angle_0
-        self.policy = policy
-        self.euler = (0., self.angle, 0.)
-
-    def update(self, elapsed):
-        self.angle = self.policy(self.angle_0, elapsed)
-        self.euler = (0., self.angle, 0.)
-
-
-# Angle update policies
-def constant(angle_0, elapsed):
-    return angle_0
-
-def linear2(angle_0, elapsed):
-    return angle_0 + 2*elapsed
-
-def sin2(angle_0, elapsed):
-    return math.sin(elapsed*2)*angle_0
-#######################
-
-
 class MotorImuSimulation:
-    def __init__(self, pid_coeffs, angle_0, policy, dt):
+    def __init__(self, pid_coeffs, imu_config, motor_controller_config, dt):
         self.state = state.State()
         self.mc = MotorControlModule(
             self.state, 
-            simulated_motor_driver=SimulatedMotorDriver())
+            config=motor_controller_config)
         Kp, Ki, Kd = coeffs
-        self.mc.reset_pid(Kp, Ki, Kd)
+        self.mc.angle_control.update_coeffs(Kp, Ki, Kd)
         self.imu = ImuReadModule(
             self.state,
-            simulated_imu=SimulatedIMU(angle_0, policy))
+            config=imu_config)
         self.dt = dt
                 
     def sim_forward_for(self, secs): 
@@ -74,6 +50,12 @@ if __name__ == "__main__":
     #ki 0.01 - 0.2
     #kd 0.01 - 0.1
     coeffs = (0.0, 0., 0.08)
-    sim = MotorImuSimulation(coeffs, -10., constant, 0.006)
+    imu_config = "testing/config/modules/sim_imu_const_config.json"
+    motor_controller_config = ("testing/config/modules/"
+                               "sim_motor_controller_config_00.json")
+    sim = MotorImuSimulation(coeffs,  
+                             imu_config, 
+                             motor_controller_config, 
+                             0.006)
     sim.sim_forward_for(3.)
 

@@ -1,0 +1,6 @@
+{
+    "python_module": "testing.libs.sim_hardware_interfaces.imu_sim",
+    "class": "SimulatedImuInterface",
+    "policy": "constant",
+    "angle_0": -10
+}

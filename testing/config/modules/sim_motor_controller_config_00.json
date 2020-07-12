@@ -1,0 +1,5 @@
+{
+    "python_module": "testing.libs.sim_hardware_interfaces.motor_controller_sim",
+    "class": "SimulatedMotorControllerInterface",
+    "throttle": 0
+}

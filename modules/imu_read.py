@@ -2,6 +2,7 @@ import json
 import logging
 import time
 
+from libs.hardware_interface.interface_provider import interface_provider
 from libs.logger_setup import get_logger
 from modules.module_base import ModuleBase
 
@@ -15,26 +16,12 @@ class TipTooFar(Exception):
 
 
 class ImuReadModule(ModuleBase):
-    def __init__(self, state, simulated_imu=None):
+    def __init__(self, state, config=""):
         DEFAULT_CADENCE_S = 0.002
-        super().__init__(state, cadence=DEFAULT_CADENCE_S)
+        super().__init__(state, config=config, cadence=DEFAULT_CADENCE_S)
         self.imu_state = state.imu_state
-        if simulated_imu is not None:
-            # Running in offline sim mode
-            self.sensor = simulated_imu
-        else:
-            # Running in online mode
-            # Online only imports #
-            from busio import I2C
-            from board import SDA, SCL
-            import adafruit_bno055
-            #######################
-            self.sensor = adafruit_bno055.BNO055(I2C(SCL, SDA))
-            # read until sensor activates
-            e = 0
-            while e==0:
-                e = self.sensor.euler[1]
-                time.sleep(0.1)
+        # Load imu sensor interface from config
+        self.sensor = interface_provider(self.config)
 
         self.unrecoverable = 75.
         self.last_poll_time = None

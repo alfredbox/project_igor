@@ -1,0 +1,4 @@
+{
+    "python_module": "libs.hardware_interface.imu_interface",
+    "class": "ImuInterface"
+}

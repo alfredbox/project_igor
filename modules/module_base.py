@@ -5,6 +5,7 @@ import time
 class ModuleBase:
     def __init__(self, state, config="", cadence=None):
         self.state = state
+        self.config = None
         if config:
             with open(config, 'r') as f:
                 self.config = json.load(f)

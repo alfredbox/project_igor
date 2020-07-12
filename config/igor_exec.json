@@ -16,12 +16,12 @@
             {
                 "python_module": "modules.motor_controller",
                 "class": "MotorControlModule",
-                "config": ""
+                "config": "config/modules/motor_controller_config.json"
             },
             {
                 "python_module": "modules.imu_read",
                 "class": "ImuReadModule",
-                "config": ""
+                "config": "config/modules/imu_read_config.json"
             }
         ]
     }

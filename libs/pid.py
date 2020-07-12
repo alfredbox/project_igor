@@ -9,9 +9,7 @@ logger = get_logger()
 
 class PID:
     def __init__(self, Kp, Ki, Kd, lo=-1, hi=1, name="pid"):
-        self.Kp = Kp
-        self.Ki = Ki
-        self.Kd = Kd
+        self.update_coeffs(Kp, Ki, Kd)
         self.lo = lo
         self.hi = hi
         self.i_error = 0.
@@ -55,3 +53,8 @@ class PID:
             logger.debug('{} data: {}'.format(self.name, json.dumps(data)))
 
         return clamp(p+i-d, lo=self.lo, hi=self.hi)
+
+    def update_coeffs(self, Kp, Ki, Kd):        
+        self.Kp = Kp
+        self.Ki = Ki
+        self.Kd = Kd

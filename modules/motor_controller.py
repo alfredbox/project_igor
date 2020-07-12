@@ -3,6 +3,7 @@ import logging
 import time
 
 from libs.clamp import clamp
+from libs.hardware_interface.interface_provider import interface_provider
 from libs.logger_setup import get_logger
 from libs.pid import PID
 
@@ -38,21 +39,15 @@ class MotorControl:
        
 
 class MotorControlModule(ModuleBase):
-    def __init__(self, state, simulated_motor_driver=None):
+    def __init__(self, state, config=""):
         DEFAULT_CADENCE_S = 0.002
-        super().__init__(state, cadence=DEFAULT_CADENCE_S)
+        super().__init__(state, config=config, cadence=DEFAULT_CADENCE_S)
         self.start_time = time.time()
         self.last_control_time = None
 
-        if simulated_motor_driver is not None:
-            # Running in offline sim mode
-            kit = simulated_motor_driver
-        else:
-            # Running in online mode
-            # Online only imports #
-            from adafruit_motorkit import MotorKit
-            ######################
-            kit = MotorKit()
+        # Load motor controller interface from config
+        kit = interface_provider(self.config)
+
         self.drive_state = state.drive_state
         # Port Motor
         self.port_motor = MotorControl(

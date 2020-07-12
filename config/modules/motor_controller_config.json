@@ -1,0 +1,4 @@
+{
+    "python_module": "libs.hardware_interface.motor_controller_interface",
+    "class": "MotorControllerInterface"
+}
